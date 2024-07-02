@@ -1,0 +1,165 @@
+---
+title: Edit Patron NFT Governance
+id: 8
+author: blockchainwinston (@blockchainwinston)
+status: Draft
+created: '2024-06-26'
+---
+
+# Referendum Summary
+
+IR-8 proposes a new token distribution mechanism using ERC404 and soulbound NFTs to ensure fair and transparent token vesting and voting power allocation within the Infinex ecosystem.
+
+# Specification
+
+## Overview
+
+The following upgrades are proposed in IR-8.
+
+1. Changing the Patron NFT from ERC721 to ERC404 standard.
+2. Utilize 1 ERC404 smart contract and 2 ERC721 soul-bound smart contract (meant for vesting options)
+3. Proposed Token Distribution Mechanism
+
+As GP has not been implemented yet as a voting mechanism, this IR will be voted on via SDS.
+
+## Rationale
+
+Currently, there are three vesting options as mentioned in [XIP-33](https://proposals.infinex.xyz/xips/xip-33).
+
+For convenience, let's name the following options:
+- **Option A**: Users pay $5000 with no cliff or lockup.
+- **Option B**: Users pay $3000 with no cliff but a 12-month linear unlock.
+- **Option C**: Users pay $1250 with a 1-year cliff and a 12-month linear unlock.
+
+"Due to the indivisibility of NFTs, the linear unlock will work in a manner where a locked purchaser can only withdraw their NFT from the lockup contract once an entire unit is unlocked."
+
+Also, [IR-7] (https://proposals.infinex.xyz/irs/ir-7) mentioned, "This IR proposes that Patron NFTs be used to vote for all ecosystem seats. Voting power should be calculated linearly, with one liquid Patron NFT serving as one vote. Any illiquid Patron NFTs should also have 0.2 voting power. The Patron community sale allows parties to purchase locked NFTs."
+
+This gives people who bought Option A the most power in the first few months. There might be a chance of foul play where they propose and vote on a plan that benefits them in the short run, causing the project to suffer in the long run.
+
+By giving an equal weightage to people based on the money they have invested, this helps balance the short-term and long-term future of the project.
+
+## Technical Specification
+
+### 1. Changing the Patron NFT from ERC721 to ERC404 standard.
+
+This IR proposes that Patron NFTs use the ERC404 standard, a combination of ERC721 and ERC20 tokens. For simplicity, we shall assume that 1 ERC721 token can be burned for 12 ERC20 tokens, and vice versa. Exact ratio can be set by the CWG in the future.
+
+![](/assets/irs/IR-8-2.png)
+
+
+### 2. Utilize 1 ERC404 smart contract and 2 ERC721 soul-bound smart contract
+
+1. Main Patron NFT contract (ERC404)
+2. Soul-bound NFT for option B
+3. Soul-bound NFT for option C
+
+1 ERC721 token has a vote weightage of 1, while the vote weightage of 1 ERC20 token is 1/12 vote weightage.
+Soul-bound NFT vote weightage will decrease accordingly below as they unlock more ERC20 token from the main contract.
+
+![](/assets/irs/IR-8-3.png)
+
+### 3. Proposed Token Distribution Mechanism
+
+#### Option A: Immediate Distribution
+
+- **Investment Amount**: $5000
+- **Cliff Period**: 0 months
+- **Lockup Period**: 0 months
+- **Tokens Distributed**: 12 ERC20 tokens immediately
+- **Weight of Each ERC20 Token**: 0.083
+- **Total Weight**: 1.0
+
+#### Option B: Linear Vesting Over 12 Months
+
+- **Investment Amount**: $3000
+- **Cliff Period**: 0 months
+- **Lockup Period**: 12 months
+- **Vesting Schedule**: 1 ERC20 token per month for 12 months
+- **Weight of Each ERC20 Token**: 0.083
+- **Initial Weight of Soulbound NFT**: 0.6
+- **Linear Decay of Soulbound NFT Weight**: Decreases by 0.05 each month
+
+#### Option C: Cliff and Linear Vesting Over 24 Months
+
+- **Investment Amount**: $1250
+- **Cliff Period**: 12 months
+- **Lockup Period**: 12 months
+- **Vesting Schedule**: 1 ERC20 token per month from month 12 to month 24
+- **Weight of Each ERC20 Token**: 0.083
+- **Initial Weight of Soulbound NFT**: 0.25
+- **Linear Decay of Soulbound NFT Weight**: Decreases by 0.0208 each month from month 12
+
+### Detailed Distribution Tables
+
+#### Option A Distribution
+
+| Month | ERC20 Received | Weight of Each ERC20 Token | Total Weight of ERC20 Tokens | Weight of Soulbound NFT | Total Weight |
+|-------|----------------|----------------------------|------------------------------|-------------------------|--------------|
+| 0     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 1     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 2     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 3     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 4     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 5     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 6     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 7     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 8     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 9     | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 10    | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 11    | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+| 12    | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+
+#### Option B Distribution
+
+| Month | ERC20 Received | Weight of Each ERC20 Token | Total Weight of ERC20 Tokens | Weight of Soulbound NFT | Total Weight |
+|-------|----------------|----------------------------|------------------------------|-------------------------|--------------|
+| 0     | 0              | 0.083                      | 0.000                        | 0.600                   | 0.600        |
+| 1     | 1              | 0.083                      | 0.083                        | 0.550                   | 0.633        |
+| 2     | 2              | 0.083                      | 0.167                        | 0.500                   | 0.667        |
+| 3     | 3              | 0.083                      | 0.250                        | 0.450                   | 0.700        |
+| 4     | 4              | 0.083                      | 0.333                        | 0.400                   | 0.733        |
+| 5     | 5              | 0.083                      | 0.417                        | 0.350                   | 0.767        |
+| 6     | 6              | 0.083                      | 0.500                        | 0.300                   | 0.800        |
+| 7     | 7              | 0.083                      | 0.583                        | 0.250                   | 0.833        |
+| 8     | 8              | 0.083                      | 0.667                        | 0.200                   | 0.867        |
+| 9     | 9              | 0.083                      | 0.750                        | 0.150                   | 0.900        |
+| 10    | 10             | 0.083                      | 0.833                        | 0.100                   | 0.933        |
+| 11    | 11             | 0.083                      | 0.917                        | 0.050                   | 0.967        |
+| 12    | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+
+#### Option C Distribution
+
+| Month | ERC20 Received | Weight of Each ERC20 Token | Total Weight of ERC20 Tokens | Weight of Soulbound NFT | Total Weight |
+|-------|----------------|----------------------------|------------------------------|-------------------------|--------------|
+| 0     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 1     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 2     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 3     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 4     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 5     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 6     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 7     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 8     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 9     | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 10    | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 11    | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 12    | 0              | 0.083                      | 0.000                        | 0.250                   | 0.250        |
+| 13    | 1              | 0.083                      | 0.083                        | 0.229                   | 0.312        |
+| 14    | 2              | 0.083                      | 0.167                        | 0.208                   | 0.375        |
+| 15    | 3              | 0.083                      | 0.250                        | 0.188                   | 0.438        |
+| 16    | 4              | 0.083                      | 0.333                        | 0.167                   | 0.500        |
+| 17    | 5              | 0.083                      | 0.417                        | 0.146                   | 0.563        |
+| 18    | 6              | 0.083                      | 0.500                        | 0.125                   | 0.625        |
+| 19    | 7              | 0.083                      | 0.583                        | 0.104                   | 0.687        |
+| 20    | 8              | 0.083                      | 0.667                        | 0.083                   | 0.750        |
+| 21    | 9              | 0.083                      | 0.750                        | 0.063                   | 0.813        |
+| 22    | 10             | 0.083                      | 0.833                        | 0.042                   | 0.875        |
+| 23    | 11             | 0.083                      | 0.917                        | 0.021                   | 0.938        |
+| 24    | 12             | 0.083                      | 1.000                        | 0.000                   | 1.000        |
+
+Depending on method of implementing governance voting, the weightage can be set there. Algorithm used for voting weightage is Linear decay and can be found in [IR-8-1.py] (proposals/public/assets/irs/ir-8/IR-8-1.py) 
+
+# Copyright
+
+Copyright and related rights waived via [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
